@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MockupBlend AI Pro - Enterprise Studio</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e1b4b10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4f46e540;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f46e580;
+    }
+    .glass-morphism {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .neon-glow {
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+    }
+    .editor-grid-bg {
+      background-size: 24px 24px;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    }
+    .canvas-border-glow {
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 1px rgba(99, 102, 241, 0.2);
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .shimmer-active {
+      background: linear-gradient(90deg, rgba(30,27,75,0.1) 25%, rgba(99,102,241,0.25) 37%, rgba(30,27,75,0.1) 63%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans overflow-x-hidden min-h-screen selection:bg-brand-500 selection:text-white">
+
+  <div id="app-container" class="flex flex-col min-h-screen">
+    
+    <!-- TOP NAVIGATION BAR -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('landing')">
+        <div class="p-2 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-xl shadow-lg shadow-indigo-500/20 flex items-center justify-center">
+          <i data-lucide="layers" class="w-6 h-6 text-white animate-pulse"></i>
+        </div>
+        <div>
+          <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">MockupBlend</span>
+          <span class="text-xs font-semibold px-2 py-0.5 ml-2 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/20">AI Pro</span>
+        </div>
+      </div>
+
+      <!-- Live Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-1">
+        <button onclick="navigateTo('landing')" class="px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all">Home</button>
+        <button onclick="navigateTo('dashboard')" class="px-4 py-2 text-sm text-indigo-400 font-semibold hover:text-indigo-300 hover:bg-slate-800/50 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Creator Studio
+        </button>
+        <button onclick="navigateTo('marketplace')" class="px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Mockup Library
+        </button>
+        <button onclick="navigateTo('analytics')" class="px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Analytics
+        </button>
+        <button onclick="navigateTo('settings')" class="px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="settings" class="w-4 h-4"></i> Settings
+        </button>
+      </nav>
+
+      <div class="flex items-center space-x-3">
+        <!-- Live Status Flag -->
+        <div class="hidden lg:flex items-center bg-slate-800/80 rounded-full px-3.5 py-1 text-xs text-slate-300 border border-slate-700/60">
+          <span class="inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full mr-2 animate-ping"></span>
+          <span>GPU Raster Engine: <strong class="text-slate-100">Live</strong></span>
+        </div>
+
+        <div class="relative">
+          <button onclick="toggleNotificationPanel()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all relative">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span id="notif-badge" class="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full"></span>
+          </button>
+          
+          <!-- Notification Panel -->
+          <div id="notif-panel" class="hidden absolute right-0 mt-3 w-80 glass-morphism rounded-xl border border-slate-800 shadow-2xl p-4 z-50 text-left">
+            <div class="flex justify-between items-center mb-3">
+              <h4 class="font-bold text-sm">Notifications</h4>
+              <button onclick="clearNotifications()" class="text-xs text-indigo-400 hover:underline">Clear all</button>
+            </div>
+            <div id="notif-list" class="space-y-3 max-h-60 overflow-y-auto">
+              <div class="p-2 rounded bg-slate-800/40 text-xs">
+                <p class="font-semibold text-slate-200">System Ready</p>
+                <p class="text-slate-400">All photorealistic textures have successfully linked.</p>
+              </div>
+              <div class="p-2 rounded bg-slate-800/40 text-xs">
+                <p class="font-semibold text-slate-200">High-Resolution Mapping</p>
+                <p class="text-slate-400">Successfully generated projection maps for outdoor signs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 border-l border-slate-800 pl-4">
+          <img id="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar" class="w-8 h-8 rounded-full border border-indigo-500/40 object-cover">
+          <div class="hidden sm:block text-left">
+            <div class="text-xs font-semibold" id="profile-name">Creative Director</div>
+            <div class="text-[10px] text-indigo-400">Enterprise Access</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow flex flex-col">
+
+      <!-- ==================== LANDING PAGE ==================== -->
+      <section id="page-landing" class="page-view py-12 px-6 max-w-7xl mx-auto space-y-16">
+        <div class="text-center space-y-6 relative py-12">
+          <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 via-transparent to-transparent -z-10 blur-3xl"></div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold tracking-wide">
+            <span class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></span>
+            PHOTOREALISTIC MOCKUP COMPOSITING
+          </div>
+          <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-tight">
+            High-Fidelity AI Mockups<br>
+            <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">Any Surface, Perfectly Blended</span>
+          </h1>
+          <p class="text-lg text-slate-400 max-w-3xl mx-auto">
+            Superimpose custom artwork, logos, and digital designs onto gorgeous, real photos. Drag, rotate, resize, and automatically blend artwork with real shadows and reflections on t-shirts, tablet screens, signs, and box packaging.
+          </p>
+          
+          <div class="flex flex-wrap justify-center gap-4 pt-4">
+            <button onclick="navigateTo('dashboard')" class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-xl font-bold shadow-xl shadow-indigo-500/20 hover:scale-[1.02] transition-all flex items-center gap-2">
+              <i data-lucide="edit-3" class="w-5 h-5"></i> Enter Design Workspace
+            </button>
+            <button onclick="navigateTo('marketplace')" class="px-8 py-4 bg-slate-900 border border-slate-800 hover:bg-slate-800/80 text-white rounded-xl font-bold hover:scale-[1.02] transition-all flex items-center gap-2">
+              View Photorealistic Assets <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="text-center">
+            <h2 class="text-2xl font-bold text-slate-100">Our Real Photorealistic Mockup Assets</h2>
+            <p class="text-slate-400 text-sm">Select any asset to load directly into the dynamic projection studio editor.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <!-- Round Sign Card -->
+            <div onclick="selectTemplate('sign')" class="cursor-pointer group relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-indigo-500/60 transition-all p-3 text-left">
+              <div class="aspect-square w-full rounded-lg bg-slate-950 overflow-hidden relative">
+                <img src="image_25cf96.png" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" alt="Outdoor Sign" onerror="this.src='https://placehold.co/400x400/111827/ffffff?text=Classic+Round+Sign'">
+                <span class="absolute top-2 left-2 bg-slate-900/90 text-[10px] text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded font-bold uppercase font-mono">Sign</span>
+              </div>
+              <h3 class="font-bold text-xs mt-3 text-slate-200 group-hover:text-white transition-colors">Classic Round Sign</h3>
+              <p class="text-[10px] text-slate-400">Verbatim: image_25cf96.png</p>
+            </div>
+
+            <!-- T-Shirt Card -->
+            <div onclick="selectTemplate('tshirt')" class="cursor-pointer group relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-indigo-500/60 transition-all p-3 text-left">
+              <div class="aspect-square w-full rounded-lg bg-slate-950 overflow-hidden relative">
+                <img src="image_25cfb7.jpg" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" alt="T-Shirt" onerror="this.src='https://placehold.co/400x400/111827/ffffff?text=Crewneck+Tee'">
+                <span class="absolute top-2 left-2 bg-slate-900/90 text-[10px] text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded font-bold uppercase font-mono">Apparel</span>
+              </div>
+              <h3 class="font-bold text-xs mt-3 text-slate-200 group-hover:text-white transition-colors">Premium Crewneck Tee</h3>
+              <p class="text-[10px] text-slate-400">Verbatim: image_25cfb7.jpg</p>
+            </div>
+
+            <!-- Dual Screen Card -->
+            <div onclick="selectTemplate('dualscreen')" class="cursor-pointer group relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-indigo-500/60 transition-all p-3 text-left">
+              <div class="aspect-square w-full rounded-lg bg-slate-950 overflow-hidden relative">
+                <img src="image_25cfd6.jpg" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" alt="Dual Device" onerror="this.src='https://placehold.co/400x400/111827/ffffff?text=Tablet+and+Phone'">
+                <span class="absolute top-2 left-2 bg-slate-900/90 text-[10px] text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded font-bold uppercase font-mono">Devices</span>
+              </div>
+              <h3 class="font-bold text-xs mt-3 text-slate-200 group-hover:text-white transition-colors">Tablet & Phone Desk</h3>
+              <p class="text-[10px] text-slate-400">Verbatim: image_25cfd6.jpg</p>
+            </div>
+
+            <!-- iPad Pro Card -->
+            <div onclick="selectTemplate('ipad')" class="cursor-pointer group relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-indigo-500/60 transition-all p-3 text-left">
+              <div class="aspect-square w-full rounded-lg bg-slate-950 overflow-hidden relative">
+                <img src="image_25cff4.png" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" alt="Handheld Tablet" onerror="this.src='https://placehold.co/400x400/111827/ffffff?text=iPad+Pro'">
+                <span class="absolute top-2 left-2 bg-slate-900/90 text-[10px] text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold uppercase font-mono">Devices</span>
+              </div>
+              <h3 class="font-bold text-xs mt-3 text-slate-200 group-hover:text-white transition-colors">iPad Pro Perspective</h3>
+              <p class="text-[10px] text-slate-400">Verbatim: image_25cff4.png</p>
+            </div>
+
+            <!-- Tall Box Card -->
+            <div onclick="selectTemplate('box')" class="cursor-pointer group relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 hover:border-indigo-500/60 transition-all p-3 text-left">
+              <div class="aspect-square w-full rounded-lg bg-slate-950 overflow-hidden relative">
+                <img src="image_25d29e.jpg" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" alt="Cosmetic Box" onerror="this.src='https://placehold.co/400x400/111827/ffffff?text=Cosmetic+Box'">
+                <span class="absolute top-2 left-2 bg-slate-900/90 text-[10px] text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-bold uppercase font-mono">Package</span>
+              </div>
+              <h3 class="font-bold text-xs mt-3 text-slate-200 group-hover:text-white transition-colors">Premium Tall Box</h3>
+              <p class="text-[10px] text-slate-400">Verbatim: image_25d29e.jpg</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== STUDIO / CREATOR WORKSPACE ==================== -->
+      <section id="page-dashboard" class="page-view flex-grow hidden flex-col lg:flex-row bg-slate-950">
+        
+        <!-- Sidebar Workspace Navigation Controls -->
+        <aside class="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-slate-800 bg-slate-900/40 p-4 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold tracking-widest text-indigo-400 uppercase">ACTIVE PROJECTS</span>
+              <button onclick="createNewProject()" class="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all" title="New Blank Project">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Saved Projects List (Dynamic) -->
+            <div id="projects-list" class="space-y-2 max-h-48 overflow-y-auto">
+              <!-- JS Populated list -->
+            </div>
+
+            <div class="border-t border-slate-800/80 pt-4">
+              <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">YOUR BRAND ARTWORKS</span>
+              
+              <!-- Quick Sample Branding Assets -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div onclick="applyDesignPreset('brand_badge_light')" class="cursor-pointer p-1 rounded border border-slate-800 hover:border-indigo-500 bg-slate-950 flex flex-col items-center">
+                  <div class="h-10 w-full rounded flex items-center justify-center bg-white/10 text-[9px] font-bold text-white font-mono uppercase">BADGE</div>
+                  <span class="text-[8px] mt-1 text-slate-400">Minimal Badge</span>
+                </div>
+                <div onclick="applyDesignPreset('cyber_logo')" class="cursor-pointer p-1 rounded border border-slate-800 hover:border-indigo-500 bg-slate-950 flex flex-col items-center">
+                  <div class="h-10 w-full rounded flex items-center justify-center bg-indigo-500/20 text-[9px] font-bold text-indigo-400 font-mono uppercase">CYBER</div>
+                  <span class="text-[8px] mt-1 text-slate-400">Neon Vector</span>
+                </div>
+              </div>
+
+              <!-- Design file selectors -->
+              <div class="mt-3 space-y-2">
+                <button onclick="triggerDesignUpload()" class="w-full py-2 px-3 bg-indigo-500/10 hover:bg-indigo-500/25 text-indigo-300 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-2 border border-indigo-500/20 transition-all">
+                  <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload Logo/Art
+                </button>
+                <input type="file" id="design-upload-input" accept="image/*" class="hidden" onchange="handleDesignFileSelect(event)">
+              </div>
+            </div>
+
+            <!-- Active Surface details -->
+            <div class="border-t border-slate-800/80 pt-4 space-y-2">
+              <span class="text-xs font-bold tracking-widest text-slate-400 uppercase">ACTIVE SHADER METRIC</span>
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/60 space-y-2 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Template File:</span>
+                  <span id="active-mockup-file" class="font-semibold text-indigo-400 font-mono">image_25cf96.png</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Material Mapping:</span>
+                  <span id="active-material-name" class="font-semibold text-emerald-400">MULTIPLY BLEND</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation widget details -->
+          <div class="bg-indigo-950/20 p-3 rounded-xl border border-indigo-500/15 mt-6 space-y-2 text-left">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-indigo-400">Virtual Room</span>
+              <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+            </div>
+            <p class="text-[10px] text-slate-400">Real-time light matching system calibrated using custom coordinate matrices.</p>
+          </div>
+        </aside>
+
+        <div class="flex-grow flex flex-col min-h-0 relative bg-slate-950 border-r border-slate-900 editor-grid-bg">
+          
+          <!-- Workspace Header Actions -->
+          <div class="px-6 py-3 border-b border-slate-950 bg-slate-900/40 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="flex items-center space-x-2">
+                <input type="text" id="project-title-input" value="Photorealistic Signage Studio" onchange="saveCurrentProjectState()" class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 font-extrabold text-sm text-slate-100 focus:outline-none transition-all px-1">
+                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                  <i data-lucide="check-circle" class="w-3 h-3"></i> Sync Live
+                </span>
+              </div>
+            </div>
+
+            <!-- Workspace Alignment / Transformations Controls -->
+            <div class="flex items-center space-x-2">
+              <button onclick="undo()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all" title="Undo (Ctrl+Z)">
+                <i data-lucide="undo-2" class="w-4 h-4"></i>
+              </button>
+              <button onclick="redo()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all" title="Redo (Ctrl+Y)">
+                <i data-lucide="redo-2" class="w-4 h-4"></i>
+              </button>
+              
+              <div class="h-6 w-px bg-slate-800 mx-1"></div>
+
+              <button onclick="alignArtwork('center')" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all" title="Center Alignment">
+                <i data-lucide="align-center" class="w-4 h-4"></i>
+              </button>
+              <button onclick="alignArtwork('top')" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all" title="Align Top Print Area">
+                <i data-lucide="align-start-vertical" class="w-4 h-4"></i>
+              </button>
+              <button onclick="resetArtworkTransforms()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all" title="Reset Scale & Placement">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              </button>
+              
+              <div class="h-6 w-px bg-slate-800 mx-1"></div>
+              
+              <!-- Zoom Tools -->
+              <div class="flex items-center space-x-1 bg-slate-900 rounded-lg p-1 border border-slate-800">
+                <button onclick="zoomCanvas(-10)" class="px-2 py-0.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all">-</button>
+                <span id="canvas-zoom-text" class="text-xs text-slate-200 font-mono w-10 text-center">100%</span>
+                <button onclick="zoomCanvas(10)" class="px-2 py-0.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-all">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas workspace containing composite photo backgrounds & floating designs -->
+          <div class="flex-grow flex items-center justify-center p-6 relative overflow-hidden select-none" id="workspace-interactive-container">
+            
+            <div id="interactive-render-canvas" class="relative w-[450px] h-[450px] rounded-2xl bg-slate-950 canvas-border-glow transition-transform duration-100 overflow-hidden" style="transform: scale(1.0);">
+              
+              <!-- Layer 1: Background Canvas (Loads photographic mockups) -->
+              <canvas id="canvas-base" width="900" height="900" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+              <!-- Layer 2: Transformable Artwork Wrapper (Movable, Scalable) -->
+              <div id="artwork-transform-wrapper" class="absolute border border-indigo-500 cursor-grab active:cursor-grabbing group select-none" style="left: 150px; top: 150px; width: 140px; height: 140px; transform: rotate(0deg);">
+                
+                <div class="w-full h-full relative flex items-center justify-center overflow-hidden">
+                  <!-- Active Label Graphic -->
+                  <img id="artwork-render-element" src="" alt="Active Artwork Overlay" class="max-w-full max-h-full object-contain pointer-events-none transition-opacity duration-200 hidden">
+                  <!-- Fallback Placeholder text -->
+                  <div id="artwork-fallback-text" class="text-center text-xs font-bold text-indigo-400 p-2 border-2 border-indigo-400/50 rounded uppercase bg-indigo-950/80 select-none pointer-events-none">
+                    MOCKUP LOGO
+                  </div>
+                </div>
+
+                <!-- Resize / Rotate Drag Handles -->
+                <!-- Top-Right Rotate Button -->
+                <div class="absolute -top-3 -right-3 w-6 h-6 bg-indigo-600 border-2 border-white rounded-full flex items-center justify-center cursor-alias shadow-lg" onmousedown="startTransform(event, 'rotate')">
+                  <i data-lucide="rotate-cw" class="w-3 h-3 text-white pointer-events-none"></i>
+                </div>
+                <!-- Bottom-Right Resize Handle -->
+                <div class="absolute -bottom-3 -right-3 w-6 h-6 bg-indigo-600 border-2 border-white rounded-full flex items-center justify-center cursor-se-resize shadow-lg" onmousedown="startTransform(event, 'resize')">
+                  <i data-lucide="maximize-2" class="w-3 h-3 text-white pointer-events-none"></i>
+                </div>
+                <!-- Delete Button top-left -->
+                <button onclick="clearActiveArtwork()" class="absolute -top-3 -left-3 w-6 h-6 bg-red-600 border-2 border-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 transition-all">
+                  <i data-lucide="trash-2" class="w-3 h-3 text-white"></i>
+                </button>
+              </div>
+
+              <!-- Layer 3: Calibration Guides and Target Surface Boxes -->
+              <div id="calibration-grid-overlay" class="hidden absolute inset-0 border border-indigo-500/30 rounded-2xl pointer-events-none" style="background-size: 20px 20px; background-image: linear-gradient(to right, rgba(99, 102, 241, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(99, 102, 241, 0.15) 1px, transparent 1px);"></div>
+              
+              <!-- Printable Safe Zone Overlay -->
+              <div id="surface-safe-zone" class="absolute border-2 border-dashed border-emerald-500/40 rounded-lg pointer-events-none flex items-center justify-center">
+                <span class="text-[8px] text-emerald-400 font-bold tracking-widest bg-emerald-950/80 px-1 py-0.5 rounded">SURFACE MAP SAFE GRID</span>
+              </div>
+            </div>
+
+            <!-- Overlaid Action Buttons -->
+            <div class="absolute bottom-6 left-6 flex space-x-2">
+              <button onclick="toggleGridCalibration()" class="px-3 py-2 bg-slate-900/90 hover:bg-slate-800 rounded-lg text-xs text-slate-300 hover:text-white flex items-center gap-1.5 border border-slate-800">
+                <i data-lucide="grid" class="w-3.5 h-3.5"></i> Target Guides
+              </button>
+              <button onclick="autoFitWorkspaceCanvas()" class="px-3 py-2 bg-slate-900/90 hover:bg-slate-800 rounded-lg text-xs text-slate-300 hover:text-white flex items-center gap-1.5 border border-slate-800">
+                <i data-lucide="maximize" class="w-3.5 h-3.5"></i> Reset Frame
+              </button>
+            </div>
+          </div>
+
+          <div id="ai-processing-hud" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center z-40 p-6">
+            <div class="max-w-md w-full space-y-6 text-center">
+              <div class="relative w-20 h-20 mx-auto">
+                <div class="absolute inset-0 border-4 border-indigo-500/20 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-indigo-500 rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <i data-lucide="cpu" class="w-8 h-8 text-indigo-400 animate-pulse"></i>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <h3 class="font-extrabold text-lg text-slate-100">Simulating AI Surface Displacement Map</h3>
+                <p id="ai-hud-status" class="text-xs text-slate-400">Extracting photographic background coordinates...</p>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5">
+                <div id="ai-hud-progress" class="bg-indigo-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/40 p-6 space-y-8 overflow-y-auto">
+          
+          <!-- Configuration Tab Controls -->
+          <div class="flex border-b border-slate-800 pb-px">
+            <button onclick="switchConfigTab('properties')" id="tab-properties-btn" class="flex-1 pb-3 text-sm font-bold text-indigo-400 border-b-2 border-indigo-500 text-center">Layer Settings</button>
+            <button onclick="switchConfigTab('materials')" id="tab-materials-btn" class="flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-200 text-center">Surface Match</button>
+            <button onclick="switchConfigTab('ai-assistant')" id="tab-ai-assistant-btn" class="flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-200 text-center flex items-center justify-center gap-1">AI Copilot <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span></button>
+          </div>
+
+          <!-- PROPERTIES CONFIG PANEL -->
+          <div id="config-tab-properties" class="space-y-6">
+            <!-- Basic Placement Sliders -->
+            <div class="space-y-4">
+              <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase">Interactive Placement</h3>
+              
+              <!-- Scaling -->
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs text-slate-400">
+                  <span>Graphic Width Scale</span>
+                  <span id="prop-scale-w">100%</span>
+                </div>
+                <input type="range" min="15" max="300" value="100" id="prop-scale-input" oninput="updateArtProperty('scale', this.value)" class="w-full accent-indigo-500 bg-slate-800 rounded-lg appearance-none h-1.5">
+              </div>
+
+              <!-- Rotation -->
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs text-slate-400">
+                  <span>Rotation (Degrees)</span>
+                  <span id="prop-rotate-val">0°</span>
+                </div>
+                <input type="range" min="-180" max="180" value="0" id="prop-rotate-input" oninput="updateArtProperty('rotate', this.value)" class="w-full accent-indigo-500 bg-slate-800 rounded-lg appearance-none h-1.5">
+              </div>
+
+              <!-- Opacity -->
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs text-slate-400">
+                  <span>Opacity</span>
+                  <span id="prop-opacity-val">100%</span>
+                </div>
+                <input type="range" min="10" max="100" value="100" id="prop-opacity-input" oninput="updateArtProperty('opacity', this.value)" class="w-full accent-indigo-500 bg-slate-800 rounded-lg appearance-none h-1.5">
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase">Blending & Lighting Engine</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="updateArtProperty('blend', 'normal')" class="blend-btn p-2.5 bg-slate-800 border border-indigo-500 text-xs rounded-lg font-semibold text-left transition-all" data-blend="normal">Normal / Overlay</button>
+                <button onclick="updateArtProperty('blend', 'multiply')" class="blend-btn p-2.5 bg-slate-900 border border-transparent text-xs text-slate-400 hover:text-slate-200 rounded-lg font-semibold text-left transition-all" data-blend="multiply">Multiply (Shadows)</button>
+                <button onclick="updateArtProperty('blend', 'screen')" class="blend-btn p-2.5 bg-slate-900 border border-transparent text-xs text-slate-400 hover:text-slate-200 rounded-lg font-semibold text-left transition-all" data-blend="screen">Screen (Light Screens)</button>
+                <button onclick="updateArtProperty('blend', 'darken')" class="blend-btn p-2.5 bg-slate-900 border border-transparent text-xs text-slate-400 hover:text-slate-200 rounded-lg font-semibold text-left transition-all" data-blend="darken">Darken Colors</button>
+              </div>
+              <p class="text-[11px] text-slate-500 italic">Multiply maps artwork beneath environmental lighting; Screen is perfect for iPad/tablet templates.</p>
+            </div>
+
+            <!-- Solid Backdrop Color Changer -->
+            <div class="space-y-3">
+              <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase">Target Surface Base Shade Tint</h3>
+              <div class="flex items-center space-x-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <input type="color" id="mockup-color-picker" onchange="updateMockupBaseColor(this.value)" value="#ffffff" class="w-10 h-10 bg-transparent border-0 rounded cursor-pointer">
+                <div class="flex-grow">
+                  <input type="text" id="mockup-color-hex" value="#ffffff" onchange="updateMockupBaseColor(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs font-mono text-indigo-400 focus:outline-none">
+                </div>
+              </div>
+            </div>
+
+            <!-- Production Export Section -->
+            <div class="border-t border-slate-800 pt-6 space-y-3 text-left">
+              <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase">Production Export Pipeline</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="triggerExport('png')" class="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/10">
+                  <i data-lucide="download" class="w-4 h-4"></i> Download PNG
+                </button>
+                <button onclick="triggerExport('jpg')" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+                  <i data-lucide="file-image" class="w-4 h-4"></i> Save High-Res JPG
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MATERIAL TYPE CONFIG PANEL -->
+          <div id="config-tab-materials" class="hidden space-y-6">
+            <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase">Select Surface Shader Finish</h3>
+            <p class="text-xs text-slate-400">Our physics system updates shading density overlays, normal maps, and specularity levels to match physical mockups.</p>
+            
+            <div class="space-y-3">
+              <!-- Material Option 1 -->
+              <div onclick="selectMaterialType('matte')" class="material-card p-4 bg-slate-800/80 border border-indigo-500 rounded-xl cursor-pointer flex justify-between items-center transition-all" data-material="matte">
+                <div>
+                  <h4 class="font-bold text-sm text-slate-100">Premium Matte / Cloth</h4>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Smooth, anti-glare flat finish ideal for the Classic Crewneck Tee (image_25cfb7.jpg).</p>
+                </div>
+                <i data-lucide="check" class="w-5 h-5 text-indigo-400"></i>
+              </div>
+
+              <!-- Material Option 2 -->
+              <div onclick="selectMaterialType('glossy')" class="material-card p-4 bg-slate-900 border border-slate-800 rounded-xl cursor-pointer flex justify-between items-center hover:border-slate-700 transition-all" data-material="glossy">
+                <div>
+                  <h4 class="font-bold text-sm text-slate-200">Glossy Finish / Polished Varnish</h4>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Highly reflective overlay ideal for the Round Outdoor Sign (image_25cf96.png).</p>
+                </div>
+                <i data-lucide="sparkles" class="w-5 h-5 text-slate-600"></i>
+              </div>
+
+              <!-- Material Option 3 -->
+              <div onclick="selectMaterialType('device_emission')" class="material-card p-4 bg-slate-900 border border-slate-800 rounded-xl cursor-pointer flex justify-between items-center hover:border-slate-700 transition-all" data-material="device_emission">
+                <div>
+                  <h4 class="font-bold text-sm text-slate-200">Retina Screen Emission</h4>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Vibrant pixels projection perfect for the iPad screen templates (image_25cff4.png).</p>
+                </div>
+                <i data-lucide="laptop" class="w-5 h-5 text-slate-600"></i>
+              </div>
+
+              <!-- Material Option 4 -->
+              <div onclick="selectMaterialType('cardboard')" class="material-card p-4 bg-slate-900 border border-slate-800 rounded-xl cursor-pointer flex justify-between items-center hover:border-slate-700 transition-all" data-material="cardboard">
+                <div>
+                  <h4 class="font-bold text-sm text-slate-200">Matte Fibered Cardboard</h4>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Adds subtle paper grain displacement ideal for the Premium Tall Box (image_25d29e.jpg).</p>
+                </div>
+                <i data-lucide="package" class="w-5 h-5 text-slate-600"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI DESIGN ASSISTANT PANEL -->
+          <div id="config-tab-ai-assistant" class="hidden space-y-4">
+            <div class="flex items-center space-x-2 border-b border-slate-800 pb-3 text-left">
+              <i data-lucide="cpu" class="w-5 h-5 text-indigo-400"></i>
+              <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase">AI Design & Branding Copilot</h3>
+            </div>
+            
+            <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/15 max-h-64 overflow-y-auto space-y-4 text-left" id="ai-chat-thread">
+              <div class="space-y-1">
+                <span class="text-[10px] bg-slate-800 text-indigo-300 font-bold px-1.5 py-0.5 rounded font-mono">Copilot</span>
+                <p class="text-xs text-slate-300">Welcome to the photographic studio workspace! I have successfully verified the active photo layer. Ask me questions about optimal print sizes, branding layouts, or social copy!</p>
+              </div>
+            </div>
+
+            <!-- Pre-engineered prompt vectors -->
+            <div class="space-y-2 pt-2 text-left">
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Branding Quick Prompts</span>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="triggerAssistantPrompt('Generate matching color scheme for the Classic Sign')" class="p-1.5 bg-slate-900 hover:bg-slate-800 text-[10px] text-left rounded border border-slate-800 text-slate-300 truncate">🎨 Colors for Sign</button>
+                <button onclick="triggerAssistantPrompt('Create professional apparel line copywriting concept')" class="p-1.5 bg-slate-900 hover:bg-slate-800 text-[10px] text-left rounded border border-slate-800 text-slate-300 truncate">✍️ Clothing Brand Copy</button>
+                <button onclick="triggerAssistantPrompt('How can I align design elements perfectly on Tablet/Phone screen')" class="p-1.5 bg-slate-900 hover:bg-slate-800 text-[10px] text-left rounded border border-slate-800 text-slate-300 truncate">📐 Device Screen Rules</button>
+                <button onclick="triggerAssistantPrompt('Design minimal logo concept for tall cosmetics packaging')" class="p-1.5 bg-slate-900 hover:bg-slate-800 text-[10px] text-left rounded border border-slate-800 text-slate-300 truncate">💄 Cosmetics Branding</button>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2 pt-2">
+              <input type="text" id="assistant-input-text" placeholder="Ask AI design assistant..." onkeydown="if(event.key === 'Enter') sendAssistantMessage()" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+              <button onclick="sendAssistantMessage()" class="p-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all">
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- ==================== MOCKUP MARKETPLACE ==================== -->
+      <section id="page-marketplace" class="page-view py-12 px-6 max-w-7xl mx-auto space-y-8 hidden">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 text-left">
+          <div>
+            <h2 class="text-3xl font-extrabold tracking-tight">Enterprise Photorealistic Mockup Library</h2>
+            <p class="text-slate-400 text-sm mt-1">Select from our premium catalog featuring linked asset files ready for customized brand mapping.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="filterTemplates('all')" class="category-filter-btn px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold transition-all" data-category="all">All Surfaces</button>
+            <button onclick="filterTemplates('apparel')" class="category-filter-btn px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-all" data-category="apparel">Apparel</button>
+            <button onclick="filterTemplates('branding')" class="category-filter-btn px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-all" data-category="branding">Branding</button>
+            <button onclick="filterTemplates('devices')" class="category-filter-btn px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-all" data-category="devices">Devices</button>
+            <button onclick="filterTemplates('packaging')" class="category-filter-btn px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold transition-all" data-category="packaging">Packaging</button>
+          </div>
+        </div>
+
+        <!-- Marketplace Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left" id="marketplace-templates-grid">
+          <!-- JS Dynamic Template Grid generation -->
+        </div>
+      </section>
+
+      <!-- ==================== ANALYTICS DASHBOARD ==================== -->
+      <section id="page-analytics" class="page-view py-12 px-6 max-w-7xl mx-auto space-y-8 hidden text-left">
+        <div>
+          <h2 class="text-3xl font-extrabold tracking-tight">Active Analytics & Resource Utilization</h2>
+          <p class="text-slate-400 text-sm mt-1">Monitor high-resolution vector mappings, persistent memory utilization, and average rendering speed metrics.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-400 tracking-wider uppercase">Local Cloud Storage cache</span>
+              <i data-lucide="hard-drive" class="w-5 h-5 text-indigo-400"></i>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-4xl font-extrabold" id="analytics-storage">24.8 MB</h3>
+              <p class="text-xs text-slate-400">Cached designs and parameters mapped locally.</p>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5">
+              <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 20%"></div>
+            </div>
+          </div>
+
+          <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-400 tracking-wider uppercase">Active Canvas Projects</span>
+              <i data-lucide="folder" class="w-5 h-5 text-purple-400"></i>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-4xl font-extrabold" id="analytics-projects-count">1</h3>
+              <p class="text-xs text-slate-400 font-mono">Synchronized with LocalStorage</p>
+            </div>
+          </div>
+
+          <div class="p-6 bg-slate-900/50 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-400 tracking-wider uppercase">Raster Processing Rate</span>
+              <i data-lucide="zap" class="w-5 h-5 text-pink-400"></i>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-4xl font-extrabold">0.24 s</h3>
+              <p class="text-xs text-slate-400">Average blend execution rate</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 space-y-6">
+          <h3 class="font-bold text-lg">Platform Performance Matrix</h3>
+          <div class="h-48 flex items-end space-x-4 border-b border-l border-slate-800 pb-2 pl-4">
+            <div class="flex-1 flex flex-col items-center space-y-2">
+              <div class="w-full bg-indigo-500/20 hover:bg-indigo-500/40 rounded-t h-32 transition-all"></div>
+              <span class="text-[10px] text-slate-400">Photographic Layers</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center space-y-2">
+              <div class="w-full bg-purple-500/20 hover:bg-purple-500/40 rounded-t h-40 transition-all"></div>
+              <span class="text-[10px] text-slate-400">Coordinative Mapping</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center space-y-2">
+              <div class="w-full bg-pink-500/20 hover:bg-pink-500/40 rounded-t h-24 transition-all"></div>
+              <span class="text-[10px] text-slate-400">Displacement Shaders</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SETTINGS PAGE ==================== -->
+      <section id="page-settings" class="page-view py-12 px-6 max-w-3xl mx-auto space-y-8 hidden text-left">
+        <div>
+          <h2 class="text-3xl font-extrabold tracking-tight">Studio Control Panel & Parameters</h2>
+          <p class="text-slate-400 text-sm mt-1">Configure workspace behavior, local autosave frequencies, and display rules.</p>
+        </div>
+
+        <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 space-y-6">
+          <h3 class="font-bold text-lg border-b border-slate-800 pb-3">User & Studio Workspace Profile</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-xs text-slate-400 font-bold">Studio Team Name</label>
+              <input type="text" id="settings-username" value="Elite Creative Studio" onchange="saveSettings()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-xs text-slate-400 font-bold">Target Mapping Tier</label>
+              <select id="settings-tier" onchange="saveSettings()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                <option value="enterprise">Enterprise Core Unlimited</option>
+                <option value="pro">Pro Plus Developer Mode</option>
+                <option value="basic">Sandbox Mode</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 space-y-6">
+          <h3 class="font-bold text-lg border-b border-slate-800 pb-3">Default Pipeline Export Specifications</h3>
+          
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm font-semibold">Automatic Layout Alignment Snap</p>
+                <p class="text-xs text-slate-400">Align designs precisely with center coordinates of the mockup boundary automatically.</p>
+              </div>
+              <input type="checkbox" id="settings-snap" checked onchange="saveSettings()" class="w-10 h-5 bg-slate-950 border-slate-800 checked:bg-indigo-600 rounded cursor-pointer accent-indigo-500">
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER PANEL -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-12 px-6 text-center text-xs text-slate-500 space-y-4">
+      <div class="flex items-center justify-center space-x-2">
+        <div class="p-1.5 bg-indigo-500/10 rounded-lg">
+          <i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i>
+        </div>
+        <span class="font-extrabold tracking-tight text-slate-300">MockupBlend AI Pro</span>
+      </div>
+      <p class="max-w-md mx-auto">Automated surface alignment, photorealistic overlay blending, and responsive layout scaling using linked pixel-grid assets.</p>
+      <p>© 2026 MockupBlend AI Pro. All Simulated Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <!-- TOAST NOTIFICATION WINDOW -->
+  <div id="toast-notif" class="fixed bottom-6 right-6 transform translate-y-12 opacity-0 bg-slate-900 text-slate-100 px-4 py-3 rounded-xl border border-indigo-500/40 shadow-2xl flex items-center space-x-3 transition-all duration-300 z-50">
+    <div class="p-1 bg-indigo-500/20 text-indigo-400 rounded-lg" id="toast-icon-container">
+      <i data-lucide="check" class="w-5 h-5"></i>
+    </div>
+    <div>
+      <p class="text-xs font-bold" id="toast-title">Success</p>
+      <p class="text-[10px] text-slate-400" id="toast-message">Custom layout properties aligned perfectly.</p>
+    </div>
+  </div>
+
+  <!-- CORE JAVASCRIPT LOGIC -->
+  <script>
+    const MOCKUP_TEMPLATES = {
+      sign: {
+        id: "sign",
+        name: "Classic Round Outdoor Sign",
+        category: "branding",
+        image: "image_25cf96.png",
+        icon: "external-link",
+        bounds: { left: 110, top: 185, width: 230, height: 230 },
+        blendMode: "multiply",
+        suggestedColor: "#ffffff",
+        helpText: "Circular signage overlay. Best mapped with centered circular branding vectors."
+      },
+      tshirt: {
+        id: "tshirt",
+        name: "Premium Fitted Crewneck Tee",
+        category: "apparel",
+        image: "image_25cfb7.jpg",
+        icon: "shirt",
+        bounds: { left: 140, top: 120, width: 170, height: 190 },
+        blendMode: "multiply",
+        suggestedColor: "#e6e600",
+        helpText: "Natural cotton chest map. Perfect for branding and graphic artwork projection."
+      },
+      dualscreen: {
+        id: "dualscreen",
+        name: "Tablet & Phone Presentation",
+        category: "devices",
+        image: "image_25cfd6.jpg",
+        icon: "monitor",
+        bounds: { left: 82, top: 153, width: 172, height: 185 },
+        blendMode: "normal",
+        suggestedColor: "#f4ede4",
+        helpText: "Multi-device presentation surface. Perfect for website & portfolio showcase screens."
+      },
+      ipad: {
+        id: "ipad",
+        name: "Handheld iPad Pro Perspective",
+        category: "devices",
+        image: "image_25cff4.png",
+        icon: "tablet",
+        bounds: { left: 115, top: 115, width: 220, height: 170 },
+        blendMode: "normal",
+        suggestedColor: "#2a2d34",
+        helpText: "Angled screen projection setup. Best fitted with responsive web mockups."
+      },
+      box: {
+        id: "box",
+        name: "Premium Tall Product Box",
+        category: "packaging",
+        image: "image_25d29e.jpg",
+        icon: "package",
+        bounds: { left: 215, top: 110, width: 75, height: 210 },
+        blendMode: "multiply",
+        suggestedColor: "#00b4d8",
+        helpText: "Tall cosmetic or medicine box packaging. Perfect for vertical label graphics."
+      }
+    };
+
+    // Pre-loaded preset vector brand images
+    const DESIGN_PRESETS = {
+      brand_badge_light: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='100%25' height='100%25' fill='%23111827'/><circle cx='100' cy='100' r='80' fill='none' stroke='%23818cf8' stroke-width='4'/><text x='100' y='95' fill='%23ffffff' font-family='sans-serif' font-size='16' font-weight='bold' text-anchor='middle'>MOCKUPBLEND</text><text x='100' y='125' fill='%23818cf8' font-family='sans-serif' font-size='10' font-weight='bold' letter-spacing='2' text-anchor='middle'>STUDIO PRO</text></svg>",
+      cyber_logo: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='100%25' height='100%25' fill='%23000000'/><polygon points='100,30 170,150 30,150' fill='none' stroke='%23f43f5e' stroke-width='5'/><text x='100' y='110' fill='%23f43f5e' font-family='sans-serif' font-size='18' font-weight='black' text-anchor='middle'>NEON</text></svg>"
+    };
+
+    // Main persistent state
+    let activeProject = {
+      id: "proj_sign_pro",
+      title: "Round Signage Mapping",
+      mockupId: "sign",
+      baseColor: "#ffffff",
+      material: "matte",
+      zoom: 100,
+      artwork: {
+        src: DESIGN_PRESETS.brand_badge_light,
+        scale: 100,
+        rotate: 0,
+        opacity: 100,
+        blend: "multiply",
+        x: 155,
+        y: 230,
+        width: 140,
+        height: 140
+      },
+      gridOverlay: false
+    };
+
+    // Memory cache of loaded photographic backgrounds
+    let bgImageCache = {};
+
+    window.onload = function() {
+      lucide.createIcons();
+      
+      // Load saved workspaces
+      loadWorkspaceFromLocalStorage();
+
+      // Render catalogs
+      renderMarketplaceTemplates();
+
+      // Start core rendering cycle
+      preloadAndRenderWorkspace();
+
+      // Setup global transform controllers
+      setupTransformDragLogic();
+
+      saveCurrentProjectState();
+
+      showToast("Studio Operational", "Photorealistic Vector Engine online.", "layers");
+    };
+
+    function navigateTo(targetPageId) {
+      document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+      const pageNode = document.getElementById(`page-${targetPageId}`);
+      if (pageNode) {
+        pageNode.classList.remove('hidden');
+        if (targetPageId === 'dashboard') {
+          pageNode.classList.add('flex');
+        }
+      }
+
+      if (targetPageId === 'dashboard') {
+        preloadAndRenderWorkspace();
+      }
+      
+      showToast("Workspace Routed", `Switched page to ${targetPageId.toUpperCase()}`, "compass");
+    }
+
+    function saveCurrentProjectState() {
+      const projects = JSON.parse(localStorage.getItem('mb_real_projects') || '[]');
+      const projIndex = projects.findIndex(p => p.id === activeProject.id);
+
+      const titleInput = document.getElementById('project-title-input');
+      if (titleInput) {
+        activeProject.title = titleInput.value;
+      }
+
+      if (projIndex >= 0) {
+        projects[projIndex] = activeProject;
+      } else {
+        projects.push(activeProject);
+      }
+
+      localStorage.setItem('mb_real_projects', JSON.stringify(projects));
+      localStorage.setItem('mb_real_active_id', activeProject.id);
+
+      renderProjectsSidebarList();
+      updateAnalyticsCounter();
+    }
+
+    function loadWorkspaceFromLocalStorage() {
+      const activeId = localStorage.getItem('mb_real_active_id');
+      const projects = JSON.parse(localStorage.getItem('mb_real_projects') || '[]');
+      
+      if (activeId && projects.length > 0) {
+        const found = projects.find(p => p.id === activeId);
+        if (found) {
+          activeProject = found;
+          document.getElementById('project-title-input').value = activeProject.title;
+          document.getElementById('mockup-color-picker').value = activeProject.baseColor;
+          document.getElementById('mockup-color-hex').value = activeProject.baseColor;
+          
+          const artworkImg = document.getElementById('artwork-render-element');
+          if (activeProject.artwork.src) {
+            artworkImg.src = activeProject.artwork.src;
+            artworkImg.classList.remove('hidden');
+            document.getElementById('artwork-fallback-text').classList.add('hidden');
+          } else {
+            artworkImg.classList.add('hidden');
+            document.getElementById('artwork-fallback-text').classList.remove('hidden');
+          }
+        }
+      }
+    }
+
+    function createNewProject() {
+      const newId = "proj_" + Date.now();
+      activeProject = {
+        id: newId,
+        title: "Photorealistic Studio Layout " + newId.substring(5),
+        mockupId: "sign",
+        baseColor: "#ffffff",
+        material: "matte",
+        zoom: 100,
+        artwork: {
+          src: DESIGN_PRESETS.brand_badge_light,
+          scale: 100,
+          rotate: 0,
+          opacity: 100,
+          blend: "multiply",
+          x: 155,
+          y: 230,
+          width: 140,
+          height: 140
+        },
+        gridOverlay: false
+      };
+
+      document.getElementById('project-title-input').value = activeProject.title;
+      saveCurrentProjectState();
+      preloadAndRenderWorkspace();
+      showToast("Workspace Created", "Blank design coordinates loaded.", "plus-circle");
+    }
+
+    function loadProject(projId) {
+      const projects = JSON.parse(localStorage.getItem('mb_real_projects') || '[]');
+      const found = projects.find(p => p.id === projId);
+      if (found) {
+        activeProject = found;
+        document.getElementById('project-title-input').value = activeProject.title;
+        document.getElementById('mockup-color-picker').value = activeProject.baseColor;
+        document.getElementById('mockup-color-hex').value = activeProject.baseColor;
+        
+        const artworkImg = document.getElementById('artwork-render-element');
+        if (activeProject.artwork.src) {
+          artworkImg.src = activeProject.artwork.src;
+          artworkImg.classList.remove('hidden');
+          document.getElementById('artwork-fallback-text').classList.add('hidden');
+        } else {
+          artworkImg.classList.add('hidden');
+          document.getElementById('artwork-fallback-text').classList.remove('hidden');
+        }
+
+        preloadAndRenderWorkspace();
+        showToast("Session Loaded", activeProject.title, "folder-open");
+      }
+    }
+
+    function deleteProject(projId, event) {
+      event.stopPropagation();
+      let projects = JSON.parse(localStorage.getItem('mb_real_projects') || '[]');
+      projects = projects.filter(p => p.id !== projId);
+      localStorage.setItem('mb_real_projects', JSON.stringify(projects));
+
+      if (activeProject.id === projId) {
+        if (projects.length > 0) {
+          loadProject(projects[0].id);
+        } else {
+          createNewProject();
+        }
+      } else {
+        renderProjectsSidebarList();
+      }
+      showToast("Removed", "Project state cleaned.", "trash");
+    }
+
+    function renderProjectsSidebarList() {
+      const listContainer = document.getElementById('projects-list');
+      if (!listContainer) return;
+
+      const projects = JSON.parse(localStorage.getItem('mb_real_projects') || '[]');
+      listContainer.innerHTML = '';
+
+      if (projects.length === 0) {
+        listContainer.innerHTML = '<p class="text-[11px] text-slate-500 italic px-2">No layouts configured yet.</p>';
+        return;
+      }
+
+      projects.forEach(p => {
+        const isActive = p.id === activeProject.id;
+        const item = document.createElement('div');
+        item.className = `group flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${isActive ? 'bg-indigo-600/25 text-white font-semibold' : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'}`;
+        item.onclick = () => loadProject(p.id);
+
+        item.innerHTML = `
+          <div class="flex items-center space-x-2 truncate">
+            <i data-lucide="file" class="w-3.5 h-3.5 text-indigo-400"></i>
+            <span class="text-xs truncate">${p.title}</span>
+          </div>
+          <button onclick="deleteProject('${p.id}', event)" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-400 rounded transition-all">
+            <i data-lucide="trash" class="w-3.5 h-3.5"></i>
+          </button>
+        `;
+        listContainer.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function preloadAndRenderWorkspace() {
+      const template = MOCKUP_TEMPLATES[activeProject.mockupId] || MOCKUP_TEMPLATES.sign;
+      const imageUrl = template.image;
+
+      document.getElementById('active-mockup-file').innerText = template.image;
+      document.getElementById('active-material-name').innerText = activeProject.artwork.blend.toUpperCase() + " BLEND";
+
+      if (bgImageCache[imageUrl]) {
+        renderCompositeWorkspace(bgImageCache[imageUrl]);
+      } else {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = imageUrl;
+        img.onload = function() {
+          bgImageCache[imageUrl] = img;
+          renderCompositeWorkspace(img);
+        };
+        img.onerror = function() {
+          console.warn("Failed to fetch photographic background: " + imageUrl + ". Falling back to high-fidelity vector rendering.");
+          // Store string "fallback" so we don't attempt reloading it again
+          bgImageCache[imageUrl] = "fallback";
+          renderCompositeWorkspace("fallback");
+        };
+      }
+    }
+
+    function drawVectorFallback(ctx, templateId, template) {
+      ctx.save();
+      
+      const bounds = template.bounds;
+      const left = bounds.left * 2;
+      const top = bounds.top * 2;
+      const width = bounds.width * 2;
+      const height = bounds.height * 2;
+      const centerX = left + width / 2;
+      const centerY = top + height / 2;
+
+      if (templateId === 'sign') {
+        // Draw warm architectural stucco brick wall background
+        ctx.fillStyle = "#ebe6de";
+        ctx.fillRect(0, 0, 900, 900);
+        
+        // Draw wall shading/vignette
+        const radial = ctx.createRadialGradient(450, 450, 100, 450, 450, 600);
+        radial.addColorStop(0, "rgba(255, 255, 255, 0.1)");
+        radial.addColorStop(1, "rgba(0, 0, 0, 0.15)");
+        ctx.fillStyle = radial;
+        ctx.fillRect(0, 0, 900, 900);
+
+        // Left building corner shadow
+        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+        ctx.fillRect(0, 0, 180, 900);
+
+        // High-fidelity metal mounting bracket
+        ctx.fillStyle = "#162238"; // Dark blue-grey iron
+        // Wall plate
+        ctx.fillRect(140, 100, 30, 400);
+        // Main horizontal arm extending towards center
+        ctx.fillRect(140, 150, centerX - 140 + 60, 24);
+        // Decorative diagonal arm bracket
+        ctx.beginPath();
+        ctx.moveTo(170, 350);
+        ctx.quadraticCurveTo(280, 240, centerX, 174);
+        ctx.lineTo(centerX - 40, 174);
+        ctx.closePath();
+        ctx.fill();
+
+        // Hanging sign rings
+        ctx.fillStyle = "#0c1424";
+        ctx.fillRect(centerX - 80, 174, 10, 30);
+        ctx.fillRect(centerX + 80, 174, 10, 30);
+
+        // Round sign drop shadow on the wall
+        ctx.beginPath();
+        ctx.arc(centerX + 15, centerY + 25, width / 2, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.fill();
+
+        // Sign casing rim
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, width / 2, 0, 2 * Math.PI);
+        ctx.fillStyle = "#1e3050"; // Dark navy steel frame
+        ctx.fill();
+
+        // Sign cream mounting face
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, (width / 2) - 10, 0, 2 * Math.PI);
+        ctx.fillStyle = "#fcf9f2"; // Cream color matching the image
+        ctx.fill();
+
+        // Circular inner accent frame line
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, (width / 2) - 24, 0, 2 * Math.PI);
+        ctx.strokeStyle = "rgba(30, 48, 80, 0.12)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Decorative text in the background of fallback sign
+        ctx.fillStyle = "rgba(30, 48, 80, 0.3)";
+        ctx.font = "bold 20px 'Plus Jakarta Sans'";
+        ctx.textAlign = "center";
+        ctx.fillText("EST. 2026", centerX, centerY - height/4);
+        ctx.fillText("OUTDOOR SIGN", centerX, centerY + height/3.5);
+
+      } else if (templateId === 'tshirt') {
+        // Lime green background
+        ctx.fillStyle = "#cfeb2c";
+        ctx.fillRect(0, 0, 900, 900);
+
+        // Shading radial gradient
+        const radialGrad = ctx.createRadialGradient(450, 450, 100, 450, 450, 600);
+        radialGrad.addColorStop(0, "rgba(255, 255, 255, 0.15)");
+        radialGrad.addColorStop(1, "rgba(0, 0, 0, 0.15)");
+        ctx.fillStyle = radialGrad;
+        ctx.fillRect(0, 0, 900, 900);
+
+        // Draw clean black apparel vector centered on the chest bounds
+        ctx.fillStyle = "#111111"; // Deep organic cotton color
+        ctx.beginPath();
+        
+        // Collar curve
+        ctx.moveTo(centerX - 80, centerY - 140);
+        ctx.bezierCurveTo(centerX - 40, centerY - 100, centerX + 40, centerY - 100, centerX + 80, centerY - 140);
+        
+        // Shoulders and sleeves
+        ctx.lineTo(centerX + 320, centerY - 90);
+        ctx.lineTo(centerX + 370, centerY + 80);
+        ctx.lineTo(centerX + 260, centerY + 120);
+        ctx.lineTo(centerX + 200, centerY + 30);
+        
+        // Body side seam down
+        ctx.lineTo(centerX + 200, centerY + 400);
+        // Hem
+        ctx.lineTo(centerX - 200, centerY + 400);
+        // Body side seam up
+        ctx.lineTo(centerX - 200, centerY + 30);
+        ctx.lineTo(centerX - 260, centerY + 120);
+        ctx.lineTo(centerX - 370, centerY + 80);
+        ctx.lineTo(centerX - 320, centerY - 90);
+        ctx.closePath();
+        ctx.fill();
+
+        // Collar ring
+        ctx.strokeStyle = "#1a1a1a";
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(centerX - 80, centerY - 140);
+        ctx.bezierCurveTo(centerX - 40, centerY - 100, centerX + 40, centerY - 100, centerX + 80, centerY - 140);
+        ctx.stroke();
+
+        // Subtle fabric shadows
+        const foldGrad = ctx.createLinearGradient(centerX - 200, centerY, centerX + 200, centerY);
+        foldGrad.addColorStop(0, "rgba(0,0,0,0.2)");
+        foldGrad.addColorStop(0.3, "rgba(255,255,255,0.05)");
+        foldGrad.addColorStop(0.5, "rgba(0,0,0,0.15)");
+        foldGrad.addColorStop(0.7, "rgba(255,255,255,0.05)");
+        foldGrad.addColorStop(1, "rgba(0,0,0,0.2)");
+        ctx.fillStyle = foldGrad;
+        ctx.fillRect(centerX - 190, centerY - 80, 380, 470);
+
+      } else if (templateId === 'dualscreen') {
+        // Modern desk shadow setup
+        ctx.fillStyle = "#e5e7eb"; // Cool light grey background
+        ctx.fillRect(0, 0, 900, 900);
+
+        // Shadow across desk from window frame
+        ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(700, 0);
+        ctx.lineTo(300, 900);
+        ctx.lineTo(0, 900);
+        ctx.closePath();
+        ctx.fill();
+
+        // Device stand / concrete desk shadow
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 520, 900, 380);
+
+        // Left Tablet Screen body
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.roundRect(left, top, width, height, 18);
+        ctx.fill();
+
+        // Glass Bezel
+        ctx.fillStyle = "#0c111d";
+        ctx.beginPath();
+        ctx.roundRect(left + 10, top + 10, width - 20, height - 20, 12);
+        ctx.fill();
+
+        // Right Phone Screen
+        const phoneX = left + width + 50;
+        const phoneY = top + height / 3;
+        const phoneW = 140;
+        const phoneH = 280;
+
+        // Phone shadow
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.roundRect(phoneX + 5, phoneY + 8, phoneW, phoneH, 14);
+        ctx.fill();
+
+        // Phone body
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.roundRect(phoneX, phoneY, phoneW, phoneH, 14);
+        ctx.fill();
+
+        // Phone screen glass
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.roundRect(phoneX + 6, phoneY + 6, phoneW - 12, phoneH - 12, 10);
+        ctx.fill();
+
+      } else if (templateId === 'ipad') {
+        // Clean neutral grey backdrop
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fillRect(0, 0, 900, 900);
+
+        // Tilted perspective hand iPad view
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(-15 * Math.PI / 180);
+
+        // Shadow
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.beginPath();
+        ctx.roundRect(-width / 2 + 10, -height / 2 + 15, width, height, 22);
+        ctx.fill();
+
+        // Slate aluminum frame
+        ctx.fillStyle = "#334155";
+        ctx.beginPath();
+        ctx.roundRect(-width / 2, -height / 2, width, height, 22);
+        ctx.fill();
+
+        // Black bezel screen
+        ctx.fillStyle = "#020617";
+        ctx.beginPath();
+        ctx.roundRect(-width / 2 + 12, -height / 2 + 12, width - 24, height - 24, 14);
+        ctx.fill();
+
+        ctx.restore();
+
+        // Vector hand silhouette holding the tablet
+        ctx.fillStyle = "#ebd0b9";
+        ctx.beginPath();
+        ctx.moveTo(centerX + width/2 - 40, centerY + height/2 + 120);
+        ctx.quadraticCurveTo(centerX + width/2 - 20, centerY + height/2 + 20, centerX + width/2 - 10, centerY + height/2 - 40);
+        ctx.lineTo(centerX + width/2 + 40, centerY + height/2 - 30);
+        ctx.lineTo(centerX + width/2 + 60, centerY + height/2 + 120);
+        ctx.closePath();
+        ctx.fill();
+
+      } else if (templateId === 'box') {
+        // Minimal studio tabletop
+        ctx.fillStyle = "#f8fafc";
+        ctx.fillRect(0, 0, 900, 900);
+
+        // Wall divider
+        ctx.fillStyle = "#f1f5f9";
+        ctx.fillRect(0, 0, 900, 480);
+        ctx.strokeStyle = "#e2e8f0";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, 480);
+        ctx.lineTo(900, 480);
+        ctx.stroke();
+
+        // 3D Box isometric perspective shape
+        // Front Face shadow
+        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+        ctx.beginPath();
+        ctx.moveTo(centerX - width/2, centerY + height/2 + 20);
+        ctx.lineTo(centerX + width/2, centerY + height/2 + 45);
+        ctx.lineTo(centerX + width/2 + 40, centerY + height/2 + 35);
+        ctx.closePath();
+        ctx.fill();
+
+        // Front Label Face
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.moveTo(left, top);
+        ctx.lineTo(left + width, top + 20);
+        ctx.lineTo(left + width, top + height);
+        ctx.lineTo(left, top + height - 20);
+        ctx.closePath();
+        ctx.fill();
+
+        // Side Perspective face
+        ctx.fillStyle = "#0ea5e9";
+        ctx.beginPath();
+        ctx.moveTo(left + width, top + 20);
+        ctx.lineTo(left + width + 60, top - 10);
+        ctx.lineTo(left + width + 60, top + height - 30);
+        ctx.lineTo(left + width, top + height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Top Perspective Lid
+        ctx.fillStyle = "#334155";
+        ctx.beginPath();
+        ctx.moveTo(left, top);
+        ctx.lineTo(left + 60, top - 30);
+        ctx.lineTo(left + width + 60, top - 10);
+        ctx.lineTo(left + width, top + 20);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function renderCompositeWorkspace(bgImg) {
+      const canvasBase = document.getElementById('canvas-base');
+      if (!canvasBase) return;
+
+      const ctxBase = canvasBase.getContext('2d');
+      ctxBase.clearRect(0, 0, 900, 900);
+
+      const template = MOCKUP_TEMPLATES[activeProject.mockupId] || MOCKUP_TEMPLATES.sign;
+
+      // Draw background photograph or apply high-fidelity vector fallback
+      if (bgImg && bgImg !== "fallback") {
+        ctxBase.drawImage(bgImg, 0, 0, 900, 900);
+      } else {
+        drawVectorFallback(ctxBase, activeProject.mockupId, template);
+      }
+
+      // Check overlay boundaries positioning
+      const safeZone = document.getElementById('surface-safe-zone');
+      if (safeZone) {
+        safeZone.style.left = template.bounds.left + 'px';
+        safeZone.style.top = template.bounds.top + 'px';
+        safeZone.style.width = template.bounds.width + 'px';
+        safeZone.style.height = template.bounds.height + 'px';
+      }
+
+      const wrapper = document.getElementById('artwork-transform-wrapper');
+      if (wrapper) {
+        wrapper.style.left = activeProject.artwork.x + 'px';
+        wrapper.style.top = activeProject.artwork.y + 'px';
+        wrapper.style.width = activeProject.artwork.width + 'px';
+        wrapper.style.height = activeProject.artwork.height + 'px';
+        wrapper.style.transform = `rotate(${activeProject.artwork.rotate}deg)`;
+        wrapper.style.opacity = activeProject.artwork.opacity / 100;
+        wrapper.style.mixBlendMode = activeProject.artwork.blend;
+      }
+
+      // Grid overlay sync
+      const grid = document.getElementById('calibration-grid-overlay');
+      if (grid) {
+        grid.style.display = activeProject.gridOverlay ? 'block' : 'none';
+      }
+    }
+
+    // --- STREAMING_CHUNK: Interactive Drag & Transformation Mechanics ---
+    let isTransforming = false;
+    let transformType = ''; // 'drag', 'rotate', 'resize'
+    let startX = 0;
+    let startY = 0;
+    let originalX = 0;
+    let originalY = 0;
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let originalRotate = 0;
+
+    function setupTransformDragLogic() {
+      const wrapper = document.getElementById('artwork-transform-wrapper');
+      if (!wrapper) return;
+
+      wrapper.onmousedown = function(e) {
+        if (e.target.closest('button') || e.target.closest('[onmousedown]')) return;
+        
+        isTransforming = true;
+        transformType = 'drag';
+        startX = e.clientX;
+        startY = e.clientY;
+        originalX = activeProject.artwork.x;
+        originalY = activeProject.artwork.y;
+        
+        document.onmousemove = handleGlobalMouseMove;
+        document.onmouseup = stopGlobalTransform;
+      };
+    }
+
+    function startTransform(e, type) {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      isTransforming = true;
+      transformType = type;
+      startX = e.clientX;
+      startY = e.clientY;
+      
+      originalWidth = activeProject.artwork.width;
+      originalHeight = activeProject.artwork.height;
+      originalRotate = activeProject.artwork.rotate;
+
+      document.onmousemove = handleGlobalMouseMove;
+      document.onmouseup = stopGlobalTransform;
+    }
+
+    function handleGlobalMouseMove(e) {
+      if (!isTransforming) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      if (transformType === 'drag') {
+        activeProject.artwork.x = originalX + dx;
+        activeProject.artwork.y = originalY + dy;
+      } else if (transformType === 'resize') {
+        activeProject.artwork.width = Math.max(30, originalWidth + dx);
+        activeProject.artwork.height = Math.max(30, originalHeight + dy);
+      } else if (transformType === 'rotate') {
+        const angleRad = Math.atan2(dy, dx);
+        const angleDeg = Math.round(angleRad * (180 / Math.PI));
+        activeProject.artwork.rotate = (originalRotate + angleDeg) % 360;
+      }
+
+      updatePropertiesSlidersUI();
+      preloadAndRenderWorkspace();
+    }
+
+    function stopGlobalTransform() {
+      isTransforming = false;
+      document.onmousemove = null;
+      document.onmouseup = null;
+      saveCurrentProjectState();
+    }
+
+    function updatePropertiesSlidersUI() {
+      document.getElementById('prop-scale-input').value = Math.round((activeProject.artwork.width / 140) * 100);
+      document.getElementById('prop-scale-w').innerText = Math.round((activeProject.artwork.width / 140) * 100) + '%';
+      
+      document.getElementById('prop-rotate-input').value = activeProject.artwork.rotate;
+      document.getElementById('prop-rotate-val').innerText = activeProject.artwork.rotate + '°';
+    }
+
+    // --- STREAMING_CHUNK: Property Adjusters & Shaders ---
+    function updateArtProperty(property, value) {
+      if (property === 'scale') {
+        const scaleVal = value / 100;
+        activeProject.artwork.width = 140 * scaleVal;
+        activeProject.artwork.height = 140 * scaleVal;
+        document.getElementById('prop-scale-w').innerText = value + '%';
+      } else if (property === 'rotate') {
+        activeProject.artwork.rotate = parseInt(value);
+        document.getElementById('prop-rotate-val').innerText = value + '°';
+      } else if (property === 'opacity') {
+        activeProject.artwork.opacity = value;
+        document.getElementById('prop-opacity-val').innerText = value + '%';
+      } else if (property === 'blend') {
+        activeProject.artwork.blend = value;
+        
+        document.querySelectorAll('.blend-btn').forEach(btn => {
+          if (btn.getAttribute('data-blend') === value) {
+            btn.classList.add('border-indigo-500', 'bg-indigo-600/20');
+            btn.classList.remove('bg-slate-900', 'border-transparent', 'text-slate-400');
+          } else {
+            btn.classList.remove('border-indigo-500', 'bg-indigo-600/20');
+            btn.classList.add('bg-slate-900', 'border-transparent', 'text-slate-400');
+          }
+        });
+      }
+
+      preloadAndRenderWorkspace();
+      saveCurrentProjectState();
+    }
+
+    function updateMockupBaseColor(color) {
+      activeProject.baseColor = color;
+      document.getElementById('mockup-color-picker').value = color;
+      document.getElementById('mockup-color-hex').value = color;
+
+      preloadAndRenderWorkspace();
+      saveCurrentProjectState();
+    }
+
+    function alignArtwork(alignment) {
+      const template = MOCKUP_TEMPLATES[activeProject.mockupId] || MOCKUP_TEMPLATES.sign;
+      
+      if (alignment === 'center') {
+        // Center within printable safe bounds
+        activeProject.artwork.x = template.bounds.left + (template.bounds.width / 2) - (activeProject.artwork.width / 2);
+        activeProject.artwork.y = template.bounds.top + (template.bounds.height / 2) - (activeProject.artwork.height / 2);
+      } else if (alignment === 'top') {
+        activeProject.artwork.x = template.bounds.left + (template.bounds.width / 2) - (activeProject.artwork.width / 2);
+        activeProject.artwork.y = template.bounds.top + 10;
+      }
+
+      preloadAndRenderWorkspace();
+      saveCurrentProjectState();
+      showToast("Design Aligned", `Position mapped exactly inside target printable safe bounds`, "align-center");
+    }
+
+    function resetArtworkTransforms() {
+      const template = MOCKUP_TEMPLATES[activeProject.mockupId] || MOCKUP_TEMPLATES.sign;
+      
+      activeProject.artwork.x = template.bounds.left + 20;
+      activeProject.artwork.y = template.bounds.top + 20;
+      activeProject.artwork.width = 140;
+      activeProject.artwork.height = 140;
+      activeProject.artwork.rotate = 0;
+      activeProject.artwork.opacity = 100;
+
+      updatePropertiesSlidersUI();
+      preloadAndRenderWorkspace();
+      saveCurrentProjectState();
+      showToast("Transforms Reset", "Standard sizing scale has been restored.", "rotate-ccw");
+    }
+
+    function zoomCanvas(delta) {
+      activeProject.zoom = Math.min(200, Math.max(50, activeProject.zoom + delta));
+      document.getElementById('canvas-zoom-text').innerText = activeProject.zoom + '%';
+      document.getElementById('interactive-render-canvas').style.transform = `scale(${activeProject.zoom / 100})`;
+    }
+
+    function autoFitWorkspaceCanvas() {
+      activeProject.zoom = 100;
+      document.getElementById('canvas-zoom-text').innerText = '100%';
+      document.getElementById('interactive-render-canvas').style.transform = `scale(1)`;
+    }
+
+    function toggleGridCalibration() {
+      activeProject.gridOverlay = !activeProject.gridOverlay;
+      preloadAndRenderWorkspace();
+    }
+
+    // --- MATERIAL TYPE SIMULATORS ---
+    function selectMaterialType(material) {
+      activeProject.material = material;
+      
+      document.querySelectorAll('.material-card').forEach(card => {
+        if (card.getAttribute('data-material') === material) {
+          card.classList.add('border-indigo-500', 'bg-slate-800/80');
+          card.classList.remove('border-slate-800', 'bg-slate-900');
+        } else {
+          card.classList.remove('border-indigo-500', 'bg-slate-800/80');
+          card.classList.add('border-slate-800', 'bg-slate-900');
+        }
+      });
+
+      // Simulation engine sweep
+      triggerAIPipelineSimulation(() => {
+        preloadAndRenderWorkspace();
+        saveCurrentProjectState();
+        showToast("Shader Finished", `${material.toUpperCase()} normal map integrated.`, "sparkles");
+      });
+    }
+
+    function triggerAIPipelineSimulation(callback) {
+      const hud = document.getElementById('ai-processing-hud');
+      const progress = document.getElementById('ai-hud-progress');
+      const text = document.getElementById('ai-hud-status');
+      
+      hud.classList.remove('hidden');
+      progress.style.width = '0%';
+      text.innerText = "Extracting photographic background coordinates...";
+
+      let currentPercent = 0;
+      const interval = setInterval(() => {
+        currentPercent += 20;
+        if (currentPercent >= 100) {
+          currentPercent = 100;
+          clearInterval(interval);
+          setTimeout(() => {
+            hud.classList.add('hidden');
+            callback();
+          }, 300);
+        }
+        
+        progress.style.width = currentPercent + '%';
+        if (currentPercent > 30 && currentPercent < 70) {
+          text.innerText = "Extracting specular reflection maps...";
+        } else if (currentPercent >= 70) {
+          text.innerText = "Applying custom displacement vector shaders...";
+        }
+      }, 120);
+    }
+
+    // --- LOGO UPLOADS & BRANDING PRESETS ---
+    function triggerDesignUpload() {
+      document.getElementById('design-upload-input').click();
+    }
+
+    function handleDesignFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          activeProject.artwork.src = e.target.result;
+          
+          const artworkImg = document.getElementById('artwork-render-element');
+          artworkImg.src = e.target.result;
+          artworkImg.classList.remove('hidden');
+          document.getElementById('artwork-fallback-text').classList.add('hidden');
+
+          triggerAIPipelineSimulation(() => {
+            preloadAndRenderWorkspace();
+            saveCurrentProjectState();
+            showToast("Design Uploaded", "Successfully projected on photographic mapping boundaries.", "upload");
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function applyDesignPreset(presetName) {
+      const src = DESIGN_PRESETS[presetName];
+      if (!src) return;
+
+      activeProject.artwork.src = src;
+      const artworkImg = document.getElementById('artwork-render-element');
+      artworkImg.src = src;
+      artworkImg.classList.remove('hidden');
+      document.getElementById('artwork-fallback-text').classList.add('hidden');
+
+      preloadAndRenderWorkspace();
+      saveCurrentProjectState();
+      showToast("Preset Loaded", "Branding vector map placed inside workspace.", "image");
+    }
+
+    function clearActiveArtwork() {
+      activeProject.artwork.src = "";
+      
+      const artworkImg = document.getElementById('artwork-render-element');
+      artworkImg.src = "";
+      artworkImg.classList.add('hidden');
+      document.getElementById('artwork-fallback-text').classList.remove('hidden');
+
+      preloadAndRenderWorkspace();
+      saveCurrentProjectState();
+      showToast("Design Removed", "Studio canvas is empty.", "trash");
+    }
+
+    function renderMarketplaceTemplates() {
+      const grid = document.getElementById('marketplace-templates-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '';
+      
+      Object.values(MOCKUP_TEMPLATES).forEach(template => {
+        const card = document.createElement('div');
+        card.className = `bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-indigo-500/60 transition-all flex flex-col justify-between group h-full`;
+        card.setAttribute('data-category', template.category);
+
+        card.innerHTML = `
+          <div class="p-6 bg-slate-950 flex items-center justify-center min-h-[220px] relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-80 z-10"></div>
+            <!-- Live Background preview with fallback image error handling -->
+            <img src="${template.image}" class="absolute inset-0 object-cover w-full h-full opacity-60 group-hover:scale-105 transition-transform duration-500" alt="${template.name}" onerror="this.src='https://placehold.co/400x400/111827/ffffff?text=${encodeURIComponent(template.name)}'">
+          </div>
+          <div class="p-4 space-y-3 z-20 bg-slate-900">
+            <div>
+              <span class="text-[9px] font-mono font-bold text-indigo-400 uppercase tracking-widest">${template.category}</span>
+              <h4 class="font-extrabold text-sm text-slate-100 mt-0.5 line-clamp-1">${template.name}</h4>
+              <p class="text-[10px] text-slate-400 font-mono mt-1">${template.image}</p>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">${template.helpText}</p>
+            <button onclick="selectTemplate('${template.id}')" class="w-full py-2 bg-slate-800 hover:bg-indigo-600 text-white rounded-lg text-xs font-bold transition-all">
+              Load Inside Studio Canvas
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function filterTemplates(category) {
+      document.querySelectorAll('.category-filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-category') === category) {
+          btn.classList.add('bg-indigo-600', 'text-white');
+          btn.classList.remove('bg-slate-900', 'text-slate-300');
+        } else {
+          btn.classList.remove('bg-indigo-600', 'text-white');
+          btn.classList.add('bg-slate-900', 'text-slate-300');
+        }
+      });
+
+      document.querySelectorAll('#marketplace-templates-grid > div').forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function selectTemplate(templateId) {
+      activeProject.mockupId = templateId;
+      
+      const template = MOCKUP_TEMPLATES[templateId];
+      if (template) {
+        activeProject.artwork.x = template.bounds.left + 20;
+        activeProject.artwork.y = template.bounds.top + 20;
+        activeProject.artwork.blend = template.blendMode;
+      }
+
+      navigateTo('dashboard');
+      
+      triggerAIPipelineSimulation(() => {
+        preloadAndRenderWorkspace();
+        saveCurrentProjectState();
+        showToast("Template Initialized", `Loaded ${template.name}`, "image");
+      });
+    }
+
+    // --- TAB CONTROLS ---
+    function switchConfigTab(tabId) {
+      document.getElementById('config-tab-properties').classList.add('hidden');
+      document.getElementById('config-tab-materials').classList.add('hidden');
+      document.getElementById('config-tab-ai-assistant').classList.add('hidden');
+
+      document.getElementById('tab-properties-btn').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-200 text-center";
+      document.getElementById('tab-materials-btn').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-200 text-center";
+      document.getElementById('tab-ai-assistant-btn').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-200 text-center flex items-center justify-center gap-1";
+
+      document.getElementById(`config-tab-${tabId}`).classList.remove('hidden');
+      
+      const activeBtn = document.getElementById(`tab-${tabId}-btn`);
+      activeBtn.className = "flex-1 pb-3 text-sm font-bold text-indigo-400 border-b-2 border-indigo-500 text-center";
+    }
+
+    function triggerExport(format) {
+      showToast("Compiling Layout", "Assembling surface maps at maximum resolution...", "cpu");
+
+      triggerAIPipelineSimulation(() => {
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = 900;
+        exportCanvas.height = 900;
+        const ctx = exportCanvas.getContext('2d');
+
+        const template = MOCKUP_TEMPLATES[activeProject.mockupId] || MOCKUP_TEMPLATES.sign;
+        const bgImg = bgImageCache[template.image];
+
+        if (bgImg && bgImg !== "fallback") {
+          ctx.drawImage(bgImg, 0, 0, 900, 900);
+        } else {
+          drawVectorFallback(ctx, activeProject.mockupId, template);
+        }
+
+        // Draw active branding graphic relative to high-resolution (900x900) coordinates
+        const artImg = document.getElementById('artwork-render-element');
+        if (activeProject.artwork.src && !artImg.classList.contains('hidden')) {
+          ctx.save();
+          
+          // Coordinate scale translations mapping 450x450 layout to 900x900 resolution output
+          const scaleFactor = 2; 
+          const targetX = activeProject.artwork.x * scaleFactor;
+          const targetY = activeProject.artwork.y * scaleFactor;
+          const targetW = activeProject.artwork.width * scaleFactor;
+          const targetH = activeProject.artwork.height * scaleFactor;
+
+          ctx.translate(targetX + targetW/2, targetY + targetH/2);
+          ctx.rotate(activeProject.artwork.rotate * Math.PI / 180);
+          ctx.globalAlpha = activeProject.artwork.opacity / 100;
+          ctx.globalCompositeOperation = activeProject.artwork.blend;
+          
+          ctx.drawImage(artImg, -targetW/2, -targetH/2, targetW, targetH);
+          ctx.restore();
+        }
+
+        const url = exportCanvas.toDataURL(format === 'png' ? 'image/png' : 'image/jpeg');
+        const trigger = document.createElement('a');
+        trigger.download = `mockupblend-${activeProject.title.toLowerCase().replace(/\s+/g, '-')}.${format}`;
+        trigger.href = url;
+        document.body.appendChild(trigger);
+        trigger.click();
+        document.body.removeChild(trigger);
+
+        showToast("Export Ready", "High fidelity image generated.", "download");
+      });
+    }
+
+    const AI_RESPONSES = [
+      "I've analyzed the active template grid boundaries. Best design alignment works within a 15% inner-margin coordinate space.",
+      "Primary Brand Palette match recommendation:\n🎨 Indigo (#6366f1) | Warm Tan (#e4dccf) | Emerald Green (#10b981).",
+      "For realistic apparel textures (image_25cfb7.jpg), apply 'MULTIPLY' blend mode so realistic cotton fabric details highlight naturally.",
+      "For device screen mockups (image_25cff4.png), 'NORMAL' blend mode is optimal to simulate responsive retina glass reflection depth."
+    ];
+
+    function sendAssistantMessage() {
+      const input = document.getElementById('assistant-input-text');
+      if (!input || !input.value.trim()) return;
+
+      const userText = input.value.trim();
+      input.value = '';
+
+      renderAssistantSpeech("User", userText);
+
+      setTimeout(() => {
+        const randomAnswer = AI_RESPONSES[Math.floor(Math.random() * AI_RESPONSES.length)];
+        renderAssistantSpeech("MockupBlend Copilot", randomAnswer);
+      }, 600);
+    }
+
+    function triggerAssistantPrompt(prompt) {
+      renderAssistantSpeech("User", prompt);
+      setTimeout(() => {
+        const randomAnswer = AI_RESPONSES[Math.floor(Math.random() * AI_RESPONSES.length)];
+        renderAssistantSpeech("MockupBlend Copilot", randomAnswer);
+      }, 500);
+    }
+
+    function renderAssistantSpeech(sender, text) {
+      const thread = document.getElementById('ai-chat-thread');
+      if (!thread) return;
+
+      const speech = document.createElement('div');
+      speech.className = "space-y-1";
+      speech.innerHTML = `
+        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${sender === 'User' ? 'bg-slate-800 text-slate-300' : 'bg-indigo-600/20 text-indigo-300'} font-mono">${sender}</span>
+        <p class="text-xs text-slate-300 whitespace-pre-line leading-relaxed">${text}</p>
+      `;
+
+      thread.appendChild(speech);
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    // --- SIDE PANELS LOGIC ---
+    function toggleNotificationPanel() {
+      const panel = document.getElementById('notif-panel');
+      panel.classList.toggle('hidden');
+      document.getElementById('notif-badge').classList.add('hidden');
+    }
+
+    function clearNotifications() {
+      document.getElementById('notif-list').innerHTML = '<p class="text-xs text-slate-500 italic">No new activity logged.</p>';
+    }
+
+    function updateAnalyticsCounter() {
+      const projects = JSON.parse(localStorage.getItem('mb_real_projects') || '[]');
+      const counter = document.getElementById('analytics-projects-count');
+      if (counter) {
+        counter.innerText = projects.length;
+      }
+    }
+
+    function saveSettings() {
+      const username = document.getElementById('settings-username').value;
+      document.getElementById('profile-name').innerText = username;
+      showToast("Settings Saved", "Preferences recorded successfully", "save");
+    }
+
+    // --- SYSTEM TOAST PANEL ---
+    function showToast(title, message, iconName = "check") {
+      const toast = document.getElementById('toast-notif');
+      const toastTitle = document.getElementById('toast-title');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon-container');
+
+      toastTitle.innerText = title;
+      toastMsg.innerText = message;
+      toastIcon.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5 text-indigo-400"></i>`;
+      
+      lucide.createIcons();
+
+      toast.classList.remove('translate-y-12', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-12', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
